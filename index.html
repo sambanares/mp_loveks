@@ -1,1 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Player</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background: #b3e0ff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+            
+    background-repeat: repeat;
+    background-size: 100px; /* Adjust size as needed */
+        }
+        .player {
+            width: 350px;
+            height: 530px;
+            background: #d0f0ff;
+            padding: 30px;
+            border-radius: 25px;
+            text-align: center;
+            color: #333;
+            box-shadow: 0 15px 25px rgba(0, 50, 100, 0.6);
+            position: relative;
+        }
+        .cover {
+            width: 270px;
+            height: 300px;
+            border-radius: 15px;
+            background: url('love.jpg') no-repeat center/cover;
+            margin: 0 auto 20px;
+            box-shadow: 0 6px 12px rgba(100, 150, 255, 0.6);
+        }
+        .title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .artist {
+            font-size: 14px;
+            opacity: 0.7;
+            margin-bottom: 20px;
+        }
+        .progress-container {
+            width: 100%;
+            height: 4px;
+            background: #a6d9ff;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 15px 0;
+            position: relative;
+            box-shadow: 0 2px 6px rgba(100, 150, 255, 0.4);
+        }
+        .progress {
+            width: 0%;
+            height: 4px;
+            background: #64a0ff;
+            border-radius: 5px;
+            transition: width 0.5s linear;
+        }
+        .time-container {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            opacity: 0.7;
+            margin-bottom: 15px;
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            margin-top: 20px;
+        }
+        button {
+            background: none;
+            border: none;
+            color: #333;
+            font-size: 27px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        button:active {
+            transform: scale(0.9);
+        }
+        .heart {
+            position: absolute;
+            color: red;
+            font-size: 20px;
+            animation: float 5s infinite ease-in-out;
+        }
+        @keyframes float {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            50% { transform: translateY(-100px) scale(1.2); opacity: 0.6; }
+            100% { transform: translateY(-200px) scale(1); opacity: 0; }
+        }
+        .progress-heart {
+            position: absolute;
+    width: 15px;
+    height: 15px;
+    background-color: lightblue;
+    border-radius: 50%;
+    top: -6px; /* Adjust based on your progress bar */
+    transition: left 0.1s linear;
+}
+.flower {
+    position: absolute;
+    width: 100px; /* Adjust size as needed */
+    height: auto;
+    opacity: 0.8;
+}
+.elements {
+    position: absolute;
+    width: 100px; /* Adjust size as needed */
+    height: auto;
+    opacity: 0.8;
+} 
 
+.flower1 { top: 10%; left: 35%; }
+.flower2 { top: 20%; right: 33%; }
+.flower3 { bottom: 30%; left: 33%; }
+.flower5 { bottom: 20%; right: 34%; }
+.flower6 { bottom: 10%; right: 30%; }
+.element1 { top: 20%; left: 30%; }
+    </style>
+</head>
+<body>
+    <div class="player">
+        <div class="cover"></div>
+        <div class="title">Lemonade - Ukulele Version</div>
+        <div class="artist">Jeremy Passion</div>
+        <div class="time-container">
+            <span id="currentTime">1:43</span>
+            <span id="totalTime">3:02</span>
+        </div>
+        <div class="progress-container" id="progressContainer">
+            <div class="progress" id="progress"></div>
+            <div class="progress-heart"></div>
+        </div>
+        <div class="controls">
+            <button onclick="prevSong()">⏮</button>
+            <button id="playPause" onclick="togglePlay()">▶</button>
+            <button onclick="nextSong()">⏭</button>
+        </div>
+        <audio id="audio" src="lemonade.mp3"></audio>
+    </div>
+    <script>
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.innerHTML = '💙';
+            heart.style.left = Math.random() * window.innerWidth + 'px';
+            heart.style.top = window.innerHeight + 'px';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 5000);
+        }
+        setInterval(createHeart, 1000);
+
+        const audio = document.getElementById("audio");
+    const playPauseBtn = document.getElementById("playPause");
+    const progress = document.getElementById("progress");
+    const progressContainer = document.getElementById("progressContainer");
+    const currentTimeEl = document.getElementById("currentTime");
+    const totalTimeEl = document.getElementById("totalTime");
+
+    const progressHeart = document.querySelector(".progress-heart"); // Add this line
+
+    // Toggle Play/Pause Button
+    function togglePlay() {
+        if (audio.paused) {
+            audio.play();
+            playPauseBtn.innerText = "⏸"; // Change to pause icon
+        } else {
+            audio.pause();
+            playPauseBtn.innerText = "▶"; // Change back to play icon
+        }
+    }
+
+    // Function for Skipping Forward
+    function nextSong() {
+        audio.currentTime += 10; // Skip forward 10 seconds
+    }
+
+    // Function for Rewinding
+    function prevSong() {
+        if (audio.currentTime > 5) {
+            audio.currentTime -= 5; // Rewind 5 seconds
+        } else {
+            audio.currentTime = 0; // Restart if less than 5 seconds
+        }
+    }
+
+    // Update progress bar as the song plays
+    audio.addEventListener("timeupdate", () => {
+        if (audio.duration) {
+            const progressPercent = (audio.currentTime / audio.duration) * 100;
+            progress.style.width = `${progressPercent}%`;
+
+            // Move the heart indicator
+        progressHeart.style.left = `calc(${progressPercent}% - 8px)`;
+
+            // Update current time display
+            const currentMinutes = Math.floor(audio.currentTime / 60);
+            const currentSeconds = Math.floor(audio.currentTime % 60);
+            currentTimeEl.innerText = `${currentMinutes}:${currentSeconds.toString().padStart(2, '0')}`;
+        }
+    });
+
+    // Update total time when metadata is loaded
+    audio.addEventListener("loadedmetadata", () => {
+        const totalMinutes = Math.floor(audio.duration / 60);
+        const totalSeconds = Math.floor(audio.duration % 60);
+        totalTimeEl.innerText = `${totalMinutes}:${totalSeconds.toString().padStart(2, '0')}`;
+    });
+
+    // Allow user to click on the progress bar to change the song position
+    progressContainer.addEventListener("click", (event) => {
+        const width = progressContainer.clientWidth;
+        const clickX = event.offsetX;
+        const duration = audio.duration;
+
+        audio.currentTime = (clickX / width) * duration;
+    });
+
+    </script>
+
+    <img src="flower1.png" class="flower flower1">
+    <img src="flower2.png" class="flower flower2">
+    <img src="flower3.png" class="flower flower3">
+    <img src="flower5.png" class="flower flower5">
+    <img src="flower6.png" class="flower flower6">
+    <img src="element1.png" class="elements element1">
+</body>
+</html>
